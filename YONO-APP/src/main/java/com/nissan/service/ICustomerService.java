@@ -16,5 +16,5 @@ public interface ICustomerService {
 	public float balance(long accNo);
 	
 	//transfer
-	public void transfer(long fromAcc, long toAcc, float amount);
+	public ResponseEntity<APIResponse> transfer(long fromAcc, long toAcc, float amount);
 }

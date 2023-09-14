@@ -75,20 +75,45 @@ public class CustomerService implements ICustomerService {
 	//checking account balance
 	@Override
 	public float balance(long accNo) {
-		return customerRepo.getBalance(accNo);
+		if(validation.isAccountValid(String.valueOf(accNo)))
+			return customerRepo.getBalance(accNo);
+		else
+			return -1;
 	}
 
 	//to transfer money to another account
 	@Transactional
 	@Override
-	public void transfer(long fromAcc, long toAcc, float amount) {
+	public ResponseEntity<APIResponse> transfer(long fromAcc, long toAcc, float amount) {
 		// TODO Auto-generated method stub
-		float bal = customerRepo.getBalance(fromAcc);
-		float minBal =  customerRepo.getMinBalance(fromAcc);
-		if(bal-minBal>amount) {
-			customerRepo.debitFrom(fromAcc, amount);
-			customerRepo.creditTo(toAcc, amount);
+		if(validation.isAccountValid(String.valueOf(fromAcc))
+				&&validation.isAccountValid(String.valueOf(toAcc))) {
+			float bal = customerRepo.getBalance(fromAcc);
+			float minBal =  customerRepo.getMinBalance(fromAcc);
+			if(bal-minBal>amount) {
+				customerRepo.debitFrom(fromAcc, amount);
+				customerRepo.creditTo(toAcc, amount);
+			}
+			else {
+				apiResponse.setData("Insuffiecient Balance !!!");
+				apiResponse.setStatus(500);
+				apiResponse.setEror("Insuffiecient Balance");
+				
+				return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
+			}
+			apiResponse.setData("Amount Transfered Successfully !!!");
+			apiResponse.setStatus(200);
+			
+			return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
 		}
+		else {
+			apiResponse.setData("Invalid Account Number !!!");
+			apiResponse.setStatus(500);
+			apiResponse.setEror("Account Number Invalid");
+			
+			return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
+		}
+			
 	}
 	
 

@@ -58,18 +58,29 @@ public class CustomerController {
 	
 	//to check balance
 	@GetMapping("/balance/{accNo}")
-	public float getBalance(@PathVariable long accNo, 
+	public ResponseEntity<APIResponse> getBalance(@PathVariable long accNo, 
 			@RequestHeader(value="authorization",defaultValue="")String auth)throws AccessDeniedException   {
 		jwtUtil.verifyCustomer(auth);
-		return custService.balance(accNo);
+		if(custService.balance(accNo)==-1) {
+			apiResponse.setData("Account Number is invalid!!!");
+			apiResponse.setStatus(500);
+			apiResponse.setEror("Invalid Account Number");
+			
+			return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
+		}
+		apiResponse.setData("Balance Amount is "+custService.balance(accNo));
+		apiResponse.setStatus(200);
+		
+		return ResponseEntity
+				.status(apiResponse.getStatus()).body(apiResponse);
 	}
 	
 	//transfer
 	@GetMapping("/transfer/{fromAcc}&{toAcc}&{amount}")
-	public void transfer(@PathVariable long fromAcc, @PathVariable long toAcc, @PathVariable float amount,
+	public ResponseEntity<APIResponse> transfer(@PathVariable long fromAcc, @PathVariable long toAcc, @PathVariable float amount,
 			@RequestHeader(value="authorization",defaultValue="")String auth)throws AccessDeniedException  {
 		jwtUtil.verifyCustomer(auth);
-		custService.transfer(fromAcc, toAcc, amount); 
+		return custService.transfer(fromAcc, toAcc, amount); 
 	}
 	
 	
