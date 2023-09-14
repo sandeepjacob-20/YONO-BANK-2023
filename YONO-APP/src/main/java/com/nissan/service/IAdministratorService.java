@@ -12,7 +12,7 @@ public interface IAdministratorService {
 	public List<Customer> getCustomer();
 	
 	//to delete a customer
-	public void deleteCustomer(long accno);
+	public Customer deleteCustomer(long accno);
 	
 	//to update customer
 	public Customer updateCustomer(Customer customer,Customer customerNew);

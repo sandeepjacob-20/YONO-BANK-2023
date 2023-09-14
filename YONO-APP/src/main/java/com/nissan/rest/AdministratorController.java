@@ -63,18 +63,41 @@ public class AdministratorController {
 	
 	//updating customer details
 	@PutMapping("/customer/{accNo}")
-	public void updateCustomer(@PathVariable long accNo, @RequestBody Customer customer, 
+	public ResponseEntity<APIResponse> updateCustomer(@PathVariable long accNo, @RequestBody Customer customer, 
 			@RequestHeader(value="authorization",defaultValue="")String auth)throws AccessDeniedException {
 		jwtUtil.verifyAdmin(auth);
-		adminService.updateCustomer(adminService.getCustomer(accNo),customer);
+		if(adminService.updateCustomer(adminService.getCustomer(accNo),customer)==null) {
+			apiResponse.setData("Mobile Number is invalid !!!");
+			apiResponse.setStatus(500);
+			apiResponse.setEror("Invalid Number");
+			
+			return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
+		}
+		apiResponse.setData("Customer updated successfully");
+		apiResponse.setStatus(200);
+		
+		return ResponseEntity
+				.status(apiResponse.getStatus()).body(apiResponse);
+			
 	}
 	
 	//deleting a customer
 	@GetMapping("/customer/{accno}")
-	public void deleteCustomer(@PathVariable long accno, @RequestHeader(value="authorization",defaultValue="")String auth)
+	public ResponseEntity<APIResponse> deleteCustomer(@PathVariable long accno, @RequestHeader(value="authorization",defaultValue="")String auth)
 			throws AccessDeniedException {
 		jwtUtil.verifyAdmin(auth);
-		adminService.deleteCustomer(accno);
+		if(adminService.deleteCustomer(accno)==null) {
+			apiResponse.setData("Account Number is invalid !!!");
+			apiResponse.setStatus(500);
+			apiResponse.setEror("Invalid Account Number");
+			
+			return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
+		}
+		apiResponse.setData("Customer deleted successfully");
+		apiResponse.setStatus(200);
+		
+		return ResponseEntity
+				.status(apiResponse.getStatus()).body(apiResponse);
 	}
 	
 	//specific customer
@@ -82,7 +105,10 @@ public class AdministratorController {
 	public Customer getOneCustomer(@PathVariable long accno, @RequestHeader(value="authorization",defaultValue="")String auth)
 			throws AccessDeniedException {
 		jwtUtil.verifyAdmin(auth);
-		return adminService.getCustomer(accno);
+		if(adminService.getCustomer(accno)!=null)
+			return adminService.getCustomer(accno);
+		else
+			throw new RuntimeException("Customer not found for account number"+accno);
 	}
 	
 	

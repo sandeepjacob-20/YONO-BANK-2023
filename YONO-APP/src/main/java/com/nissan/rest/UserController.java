@@ -23,7 +23,7 @@ public class UserController {
 	@Autowired
 	private IUserService userService;
 	
-	@PostMapping("/user")
+	@PostMapping("/signup")
 	public ResponseEntity<APIResponse> addUser(@RequestBody Users user){
 		if(userService.saveUser(user)==null) {
 			apiResponse.setData("Name can have only alphabets!!");

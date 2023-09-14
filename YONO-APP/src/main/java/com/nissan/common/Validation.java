@@ -46,7 +46,7 @@ public class Validation {
 		try {
 			Pattern accPattern = Pattern.compile("[^0-9]");
 			Matcher accMatcher = accPattern.matcher(accNo);
-			if(accMatcher.find()|| accNo.length()!=6) {
+			if(accMatcher.find()|| accNo.length()!=9) {
 				throw new InvalidNameException("Hey! Invalid Account Number");
 			}
 			else

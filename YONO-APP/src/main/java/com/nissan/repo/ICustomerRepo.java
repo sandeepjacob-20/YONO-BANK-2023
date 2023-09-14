@@ -13,7 +13,7 @@ public interface ICustomerRepo extends CrudRepository<Customer,Long> {
 	//to deposit amount to account
 	@Modifying
 	@Query("UPDATE com.nissan.model.Customer SET balance=balance+?1 WHERE accNo=?2")
-	public void depositAmount(float amount, long accNo);
+	public Customer depositAmount(float amount, long accNo);
 	
 	//to get the balance of user
 	@Query("SELECT balance FROM com.nissan.model.Customer WHERE accNo=?1")

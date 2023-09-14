@@ -3,6 +3,7 @@ package com.nissan.rest;
 import java.nio.file.AccessDeniedException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -27,20 +28,32 @@ public class CustomerController {
 	
 	//to deposit money
 	@GetMapping("/deposit/{amount}&{accNo}")
-	public void depositMoney(@PathVariable float amount, @PathVariable long accNo,
+	public ResponseEntity<APIResponse> depositMoney(@PathVariable float amount, @PathVariable long accNo,
 			@RequestHeader(value="authorization",defaultValue="")String auth)
 			throws AccessDeniedException { 
 		jwtUtil.verifyCustomer(auth);
-		custService.deposit(amount,accNo);
+		if(custService.deposit(amount,accNo)==null) {
+			apiResponse.setData("Account Number is invalid or PAN Number Required!!!");
+			apiResponse.setStatus(500);
+			apiResponse.setEror("Invalid Account Number or PAN Required");
+			
+			return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
+		}
+		apiResponse.setData("Amount Deposited successfully");
+		apiResponse.setStatus(200);
+		
+		return ResponseEntity
+				.status(apiResponse.getStatus()).body(apiResponse);
+			
 	}
 	
 	//to withdraw money
 	@GetMapping("/withdraw/{amount}&{accNo}")
-	public void withdrawMoney(@PathVariable float amount, @PathVariable long accNo,
+	public ResponseEntity<APIResponse> withdrawMoney(@PathVariable float amount, @PathVariable long accNo,
 			@RequestHeader(value="authorization",defaultValue="")String auth)
 			throws AccessDeniedException  {
 		jwtUtil.verifyCustomer(auth);
-		custService.withdraw(amount, accNo);
+		return custService.withdraw(amount, accNo);
 	}
 	
 	//to check balance

@@ -1,11 +1,16 @@
 package com.nissan.service;
 
+import org.springframework.http.ResponseEntity;
+
+import com.nissan.common.APIResponse;
+import com.nissan.model.Customer;
+
 public interface ICustomerService {
 	//deposit money into account
-	public void deposit(float amount, long accNo);
+	public Customer deposit(float amount, long accNo);
 	
 	//withdraw money from account
-	public void withdraw(float amount, long accNo);
+	public ResponseEntity<APIResponse> withdraw(float amount, long accNo);
 	
 	//check balance
 	public float balance(long accNo);

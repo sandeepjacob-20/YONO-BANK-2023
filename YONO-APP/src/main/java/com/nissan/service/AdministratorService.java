@@ -39,14 +39,16 @@ public class AdministratorService implements IAdministratorService {
 	//to list all the customers
 	@Override
 	public List<Customer> getCustomer() {
-		return (List<Customer>)adminRepo.findAll();
+		return (List<Customer>)adminRepo.listAll();
 	}
 
 	//delete a customer
 	@Transactional
 	@Override
-	public void deleteCustomer(long accno) {
-		adminRepo.deleteCustomer(accno);
+	public Customer deleteCustomer(long accno) {
+		if(validation.isAccountValid(String.valueOf(accno))) 
+			return adminRepo.deleteCustomer(accno);
+		return null;
 	}
 
 	//update customer details
@@ -54,15 +56,18 @@ public class AdministratorService implements IAdministratorService {
 	public Customer updateCustomer(Customer customer, Customer customerNew) {
 		customer.setMobileNumber(customerNew.getMobileNumber());
 		customer.setMailID(customerNew.getMailID());
-		if(validation.isNameValid(customer.getCustName())) {
+		if(validation.isNameValid(customer.getCustName())
+				&&validation.isNumberValid(customer.getMobileNumber())) {
 			return adminRepo.save(customer);
 		}
-		return adminRepo.save(customer);
+		return null;
 	}
 	
 	//to get a specific customer
 	@Override
 	public Customer getCustomer(long accno) {
+		if(validation.isAccountValid(String.valueOf(accno)))
+			return null;
 		return adminRepo.findById(accno).orElseThrow(()->new RuntimeException("Customer not found for account number"+accno));
 	}
 	
